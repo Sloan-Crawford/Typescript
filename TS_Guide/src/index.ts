@@ -36,14 +36,14 @@ console.log(mySize); // -> 2
 
 
 // --------Functions-----------
-// best practice to annotate params and return types
+// best practice to annotate params and return types.
 // enable "noUnusedParameters", "noImplicitReturns" and "noUnusedLocals" in config to avoid bugs.
 function calculateTax(income: number, taxYear: number): number { // : number annotates return type
  if (taxYear < 2022)
   return income * 1.2;
  return income * 1.3;
 }
-calculateTax(10_000, 2022); // to call the function, requires EXACTLY two params as above
+calculateTax(10_000, 2022); // to call the function, requires EXACTLY two params as above.
 
 // or... add a ? after a param name to make that param optional when called. not a good way.
 // a better way is to give a param a default value:
@@ -90,7 +90,7 @@ let employee2: Employee = {
 
 // --------Union Types (|)-----------
 // We can give a variable/function parameter more than one type:
-function kgToLbs (weight: number | string): number { // param can now be number or string
+function kgToLbs (weight: number | string): number { // param can now be number or string.
  // Narrowing:
  if (typeof weight === 'number') 
   return weight * 2.2;
@@ -113,7 +113,7 @@ type Resizable = {
  resize: () => void
 };
 
-type UIWidget = Draggable & Resizable; // this is the intersection type
+type UIWidget = Draggable & Resizable; // this is the intersection type.
 // now when it is used, need to define all methods within each variable that uses that type:
 let textBox: UIWidget = {
  drag: () => {},
@@ -124,9 +124,44 @@ let textBox: UIWidget = {
 // --------Literal Types (exact)-----------
 // sometimes we want to limit the values we can assign to a variable. use literal types:
 type Quantity = 50 | 100; // first create a union type
-let quantity: Quantity = 100; // then anotate variable with the new type 'Quantity'
+let quantity: Quantity = 100; // then anotate variable with the new type 'Quantity'.
 // literal types can be strings too:
 type Metric = 'cm' | 'inch';
 
 
-// --------Nullabe Types ()-----------
+// --------Nullabe Types (null | undefined)-----------
+// common source of bugs. never activate "strictNullChecks": false in tsconfig.
+// a way to use null or undefined appropriately using union types:
+function greet(name: string | null | undefined) {
+ if (name)
+  console.log(name.toUpperCase());
+ else 
+  console.log('Hola!');
+  
+}
+
+greet(null); // can be done now because it was annotated in the params above.
+greet(undefined); // same with this one.
+
+
+// --------Optional Chaining (?.) -----------
+type Customer = {
+ birthday?: Date // birthday property is now optional (property?).
+};
+
+function getCustomer(id: number): Customer | null | undefined { // can return a union type too.
+ return id === 0 ? null : { birthday: new Date() }; // if id is 0, return null, otherwise :
+}
+
+let customer = getCustomer(0);
+// if (customer !== null && customer !== undefined) // *this is key to avoid a compilation errors
+// better way to write it using the Optional Property Access Operator (?.):
+ console.log(customer?.birthday?.getFullYear()); // executed only if customer and birthday exist.
+
+// Optional Element Access Operator (element?.):
+// customers?.[0]
+
+// Optional Call (function(?.)):
+let log: any = (message: string) => console.log(message);
+log?.('message 1'); // this gets called only if log is referencing an actual function (it is)
+
